@@ -1,5 +1,3 @@
-/* To achieve right to write on ttyACM0
- sudo chmod a+rw /dev/ttyACM0*/
 unsigned long lastTimeHigh = millis();
 unsigned long currentTime;
 String blink = "Blink at ";
@@ -9,15 +7,14 @@ String blinkState = "Speed: ";
 uint8_t speed = 1;
 // Blink interval
 unsigned int blinkInterval = 2000;
-
 // Reset built-in func
 void(* resetFunc) (void) = 0;
-// put your setup code here, to run once
+
 void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT); // 13
   // Digital input pins for buttons pressure sense
-  pinMode(2, INPUT);
-  pinMode(3, INPUT);
+  pinMode(11, INPUT);
+  pinMode(12, INPUT);
   Serial.begin(9600);
   Serial.println(blinkState + speed);
 }
@@ -26,7 +23,7 @@ void loop() {
   /* Check increase button pressure
   or 'u' serial monitor input
   to eventually increase blink frequency */
-  if (digitalRead(3) == HIGH || Serial.read() == 'u') {
+  if (digitalRead(12) == HIGH || Serial.read() == 'u') {
     // Button stabilization delay
     delay(300);
     if (speed < 4) {
@@ -39,7 +36,7 @@ void loop() {
   /* Check decrease button pressure
   or 'd' serial monitor input
   to eventually decrease blink frequency */
-  if (digitalRead(2) == HIGH || Serial.read() == 'd') {
+  if (digitalRead(11) == HIGH || Serial.read() == 'd') {
     // Button stabilization delay
     delay(300);
     if (speed > 1) {
