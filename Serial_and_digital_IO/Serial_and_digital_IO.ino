@@ -8,7 +8,7 @@ uint8_t speed = 1;
 // Blink interval
 unsigned int blinkInterval = 2000;
 // Last serial monitor message memorization
-String lastSerialMessage;
+char lastSerialMessage;
 // Increase freq pin status
 int increaseReading;
 // Decrease freq pin status
@@ -40,18 +40,18 @@ void loop() {
   currentTime = millis();
   // Check new messages from serial monitor
   lastSerialMessage = Serial.read();
-  if (lastSerialMessage == 'u') { // Stand for 'up'
+  if (lastSerialMessage == 'u') { // Stands for 'up'
     // Eventually increase blink freq
-    if (speed < 4) {
+    if (speed < 5) {
       speed++;
       blinkInterval /= 2;
       Serial.println(blinkState + speed);
     }
     else Serial.println("Blink frequency already highest: " + speed);
   }
-  if (lastSerialMessage == 'd') { // Stand for 'down'
+  if (lastSerialMessage == 'd') { // Stands for 'down'
     // Eventually decrease blink freq
-    if (speed > 0) {
+    if (speed > 1) {
       speed --;
       blinkInterval *= 2;
       Serial.println(blinkState + speed);
@@ -66,7 +66,7 @@ void loop() {
     if (increaseReading != increaseButtonState) increaseButtonState = increaseReading; // Button pressure or release!
     // Keep increase if button keep being pressed
     if (increaseButtonState == HIGH){
-      if (speed < 4) {
+      if (speed < 5) {
         speed++;
         blinkInterval /= 2;
         Serial.println(blinkState + speed);
@@ -82,7 +82,7 @@ void loop() {
     if (decreaseReading != decreaseButtonState) decreaseButtonState = decreaseReading; // Button pressure or release!
     // Keep decrease if button keep being pressed (must add delay to slow down increase...)
     if (decreaseButtonState == HIGH){
-      if (speed > 0) {
+      if (speed > 1) {
         speed--;
         blinkInterval *= 2;
         Serial.println(blinkState + speed);
