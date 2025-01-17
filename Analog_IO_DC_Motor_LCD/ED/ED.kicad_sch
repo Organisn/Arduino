@@ -4072,6 +4072,16 @@
 		)
 		(uuid "96c39040-4c6b-420f-9448-676a01f97933")
 	)
+	(text "(Optional capacitors)"
+		(exclude_from_sim no)
+		(at 44.196 82.296 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "c3fcdf35-2cdf-4a2f-9194-b8494886552f")
+	)
 	(text "~"
 		(exclude_from_sim no)
 		(at 83.058 76.454 0)
