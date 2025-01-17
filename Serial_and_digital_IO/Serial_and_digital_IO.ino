@@ -7,6 +7,23 @@ String blinkState = "Speed: ";
 uint8_t speed = 1;
 // Blink interval
 unsigned int blinkInterval = 2000;
+// Last serial monitor message memorization
+String lastSerialMessage;
+// Increase freq pin status
+int increaseReading;
+// Decrease freq pin status
+int decreaseReading;
+// Memorize last buttons status: pressure, release or debounce
+int lastIncreaseButtonState = LOW; // LOW or HIGH as reading
+int lastDecreaseButtonState = LOW; // LOW or HIGH as reading
+// Memorize definitive button pressures or releases
+int increaseButtonState = LOW;
+int decreaseButtonState = LOW;
+// Memorize each button pressure or debounce time
+unsigned long lastIncreaseDebounceTime = 0; // ms
+unsigned long lastDecreaseDebounceTime = 0;
+// Button debounce lapse
+unsigned long debounceDelay = 50;
 // Reset built-in func
 void(* resetFunc) (void) = 0;
 
@@ -20,12 +37,11 @@ void setup() {
 }
 // put your main code here, to run repeatedly
 void loop() {
-  /* Check increase button pressure
-  or 'u' serial monitor input
-  to eventually increase blink frequency */
-  if (digitalRead(12) == HIGH || Serial.read() == 'u') {
-    // Button stabilization delay
-    delay(300);
+  currentTime = millis();
+  // Check new messages from serial monitor
+  lastSerialMessage = Serial.read();
+  if (lastSerialMessage == 'u') { // Stand for 'up'
+    // Eventually increase blink freq
     if (speed < 4) {
       speed++;
       blinkInterval /= 2;
@@ -33,20 +49,48 @@ void loop() {
     }
     else Serial.println("Blink frequency already highest: " + speed);
   }
-  /* Check decrease button pressure
-  or 'd' serial monitor input
-  to eventually decrease blink frequency */
-  if (digitalRead(11) == HIGH || Serial.read() == 'd') {
-    // Button stabilization delay
-    delay(300);
-    if (speed > 1) {
-      speed--;
+  if (lastSerialMessage == 'd') { // Stand for 'down'
+    // Eventually decrease blink freq
+    if (speed > 0) {
+      speed --;
       blinkInterval *= 2;
       Serial.println(blinkState + speed);
     }
     else Serial.println("Blink frequency already lowest: " + speed);
   }
-  currentTime = millis();
+  /* Check increase/decrease button pressure
+  to eventually increase/decrease blink frequency */
+  increaseReading = digitalRead(12);
+  if (increaseReading != lastIncreaseButtonState) lastIncreaseDebounceTime = currentTime;  // Button pressure, release or debounce!
+  if ((currentTime - lastIncreaseDebounceTime) > debounceDelay) { // Button stabilized 
+    if (increaseReading != increaseButtonState) increaseButtonState = increaseReading; // Button pressure or release!
+    // Keep increase if button keep being pressed
+    if (increaseButtonState == HIGH){
+      if (speed < 4) {
+        speed++;
+        blinkInterval /= 2;
+        Serial.println(blinkState + speed);
+      }
+      else Serial.println("Blink frequency already highest: " + speed);
+    }
+  }
+  lastIncreaseButtonState = increaseReading;
+
+  decreaseReading = digitalRead(11);
+  if (decreaseReading != lastDecreaseButtonState) lastDecreaseDebounceTime = currentTime;  // Button pressure, release or debounce!
+  if ((currentTime - lastDecreaseDebounceTime) > debounceDelay) { // Button stabilized 
+    if (decreaseReading != decreaseButtonState) decreaseButtonState = decreaseReading; // Button pressure or release!
+    // Keep decrease if button keep being pressed (must add delay to slow down increase...)
+    if (decreaseButtonState == HIGH){
+      if (speed > 0) {
+        speed--;
+        blinkInterval *= 2;
+        Serial.println(blinkState + speed);
+      }
+      else Serial.println("Blink frequency already lowest: " + speed);
+    }
+  }
+  lastDecreaseButtonState = decreaseReading;
   // LED on
   if (currentTime - lastTimeHigh > blinkInterval) {
     digitalWrite(LED_BUILTIN, HIGH);
@@ -55,8 +99,8 @@ void loop() {
   }
   // LED off
   if(currentTime - lastTimeHigh > blinkInterval / 2) digitalWrite(LED_BUILTIN, LOW);
-  // Reset instruction after 60s
-  if (currentTime > 60000) {
+  // Reset instruction after 2 minutes
+  if (currentTime > 120000) {
     Serial.println("Resetting board...");
     delay(500); // resetFunc()'s faster than println() display phase...
     resetFunc();

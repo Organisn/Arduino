@@ -17,22 +17,22 @@ bool rotationState = 0;
 int rotationReading;
 // Enabling pin status
 int enablingReading;
-// Memorize each button pressure, release or debounce
+// Memorize last buttons status: pressure, release or debounce
 int lastRotationButtonState = LOW; // LOW or HIGH as reading
 int lastEnablingButtonState = LOW; // LOW or HIGH as reading
 // Memorize definitive button pressures or releases
 int rotationButtonState = LOW;
 int enablingButtonState = LOW;
 // Last time reading
-long lastTime;
+unsigned long lastTime;
 // Memorize each button pressure or debounce time
-long lastRotationDebounceTime = 0; // ms
-long lastEnablingDebounceTime = 0;
+unsigned long lastRotationDebounceTime = 0; // ms
+unsigned long lastEnablingDebounceTime = 0;
 // Debounce lapse
-long debounceDelay = 50;
+unsigned long debounceDelay = 50;
 // Speed display variables
-long lastSpeedDisplay = 0;
-long speedDisplayDelay = 250; // ms
+unsigned long lastSpeedDisplay = 0;
+unsigned long speedDisplayDelay = 250; // ms
 // Motor state display messages
 // PC serial monitor
 String enablingUpdate = "Driver ";
