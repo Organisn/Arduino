@@ -36,7 +36,7 @@ void setup() {
   Serial.begin(9600);
   Serial.println(blinkState + speed);
 }
-// put your main code here, to run repeatedly
+
 void loop() {
   currentTime = millis();
   // Check new messages from serial monitor
@@ -64,7 +64,9 @@ void loop() {
   increaseReading = digitalRead(12);
   if (increaseReading != lastIncreaseButtonState) lastIncreaseDebounceTime = currentTime;  // Button pressure, release or debounce!
   if ((currentTime - lastIncreaseDebounceTime) > debounceDelay) { // Button stabilized 
-    if (increaseReading != increaseButtonState) increaseButtonState = increaseReading; // Button pressure or release!
+    if (increaseReading != increaseButtonState) {
+      increaseButtonState = increaseReading; // Button pressure or release!
+    } 
     // Keep increase if button keep being pressed
     if (increaseButtonState == HIGH){
       if (speed < 5) {
