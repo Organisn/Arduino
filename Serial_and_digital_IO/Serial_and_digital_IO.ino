@@ -8,6 +8,7 @@ uint8_t speed = 1;
 // Blink interval
 unsigned int blinkInterval = 2000;
 // Last serial monitor message memorization
+// (Use 'U' or 'D' to increase o decrease LED blink frequency)
 char lastSerialMessage;
 // Increase freq pin status
 int increaseReading;
