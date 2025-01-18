@@ -25,6 +25,13 @@ unsigned long lastIncreaseDebounceTime = 0; // ms
 unsigned long lastDecreaseDebounceTime = 0;
 // Button debounce lapse
 unsigned long debounceDelay = 50;
+// Memorize time when actually buttons are pressed
+unsigned long lastIncreaseButtonPressureTime;
+unsigned long lastDecreaseButtonPressureTime;
+// Speed in/decrease delay over buttons pressure
+// They will change after buttons pressure
+unsigned int increaseButtonPressureDelay;
+unsigned int decreaseButtonPressureDelay;
 // Reset built-in func
 void(* resetFunc) (void) = 0;
 
@@ -48,7 +55,7 @@ void loop() {
       blinkInterval /= 2;
       Serial.println(blinkState + speed);
     }
-    else Serial.println("Blink frequency already highest: " + speed);
+    else Serial.println("Blink frequency already highest: " + String(speed));
   }
   if (lastSerialMessage == 'd') { // Stands for 'down'
     // Eventually decrease blink freq
@@ -57,7 +64,7 @@ void loop() {
       blinkInterval *= 2;
       Serial.println(blinkState + speed);
     }
-    else Serial.println("Blink frequency already lowest: " + speed);
+    else Serial.println("Blink frequency already lowest: " + String(speed));
   }
   /* Check increase/decrease button pressure
   to eventually increase/decrease blink frequency */
@@ -66,15 +73,24 @@ void loop() {
   if ((currentTime - lastIncreaseDebounceTime) > debounceDelay) { // Button stabilized 
     if (increaseReading != increaseButtonState) {
       increaseButtonState = increaseReading; // Button pressure or release!
+      // Add some delay over pressure to avoid to over-in/decrease speed (program loop is faster than human finger button pressure)
+      // This will let user sensibly check how speed value change during pressure time
+      // A single speed level in/decrement requires only 30ms pressure to be applied
+      increaseButtonPressureDelay = 30;
+      // So, first, start counting time since pressure
+      if (increaseButtonState == HIGH) lastIncreaseButtonPressureTime = currentTime;
     } 
-    // Keep increase if button keep being pressed
-    if (increaseButtonState == HIGH){
+    // Increase speed when pressure delay is exceeded and keep increase delay over delay if button keep being pressed
+    if (increaseButtonState == HIGH && (currentTime - lastIncreaseButtonPressureTime) > increaseButtonPressureDelay) {
       if (speed < 5) {
         speed++;
         blinkInterval /= 2;
         Serial.println(blinkState + speed);
       }
-      else Serial.println("Blink frequency already highest: " + speed);
+      else Serial.println("Blink frequency already highest: " + String(speed));
+      // If button keep being pushed it will require 1s for next speed level increment
+      increaseButtonPressureDelay = 1000; 
+      lastIncreaseButtonPressureTime = currentTime;
     }
   }
   lastIncreaseButtonState = increaseReading;
@@ -82,15 +98,22 @@ void loop() {
   decreaseReading = digitalRead(11);
   if (decreaseReading != lastDecreaseButtonState) lastDecreaseDebounceTime = currentTime;  // Button pressure, release or debounce!
   if ((currentTime - lastDecreaseDebounceTime) > debounceDelay) { // Button stabilized 
-    if (decreaseReading != decreaseButtonState) decreaseButtonState = decreaseReading; // Button pressure or release!
-    // Keep decrease if button keep being pressed (must add delay to slow down increase...)
-    if (decreaseButtonState == HIGH){
+    if (decreaseReading != decreaseButtonState) {
+      decreaseButtonState = decreaseReading; // Button pressure or release!
+      decreaseButtonPressureDelay = 30;
+      if (decreaseButtonState == HIGH) lastDecreaseButtonPressureTime = currentTime;
+    }
+    // // As for speed increasing mechanism, decrease speed when pressure delay is exceeded and keep decrease delay over delay if button keep being pressed
+    if (decreaseButtonState == HIGH && (currentTime - lastDecreaseButtonPressureTime) > decreaseButtonPressureDelay) {
       if (speed > 1) {
         speed--;
         blinkInterval *= 2;
         Serial.println(blinkState + speed);
       }
-      else Serial.println("Blink frequency already lowest: " + speed);
+      else Serial.println("Blink frequency already lowest: " + String(speed));
+      // If button keep being pushed it will require 1s for next speed level decrement
+      decreaseButtonPressureDelay = 1000;
+      lastDecreaseButtonPressureTime = currentTime;
     }
   }
   lastDecreaseButtonState = decreaseReading;
