@@ -20,7 +20,7 @@ int enablingReading;
 // Memorize last buttons status: pressure, release or debounce
 int lastRotationButtonState = LOW; // LOW or HIGH as reading
 int lastEnablingButtonState = LOW; // LOW or HIGH as reading
-// Memorize definitive button pressures or releases
+// Memorize definitive buttons pressures or releases
 int rotationButtonState = LOW;
 int enablingButtonState = LOW;
 // Last time reading
@@ -96,7 +96,7 @@ void loop() {
   // Motor spin sense changes on right button pressure
   rotationReading = digitalRead(12);
   if (rotationReading != lastRotationButtonState) lastRotationDebounceTime = lastTime;  // Button pressure, release or debounce!
-  if ((lastTime - lastRotationDebounceTime) > debounceDelay && rotationReading != rotationButtonState){ // Button pressure or release!
+  if ((lastTime - lastRotationDebounceTime) > debounceDelay && rotationReading != rotationButtonState) { // Button pressure or release!
     rotationButtonState = rotationReading;
     if (rotationButtonState == HIGH){
       rotationState = !rotationState; // Invert motor spin sense after button pressure
