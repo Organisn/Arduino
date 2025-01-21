@@ -28,7 +28,6 @@ unsigned long lastADebounceTime = 0;
 unsigned long debounceDelay = 50;
 // Memorize time from program launch
 unsigned long lastTime;
-int playingNote = 0;
 // Reset built-in func
 void(* resetFunc) (void) = 0;
 // Shift registers as 74HC595 turn out useful to save board IO pins (5, to be exact)
@@ -44,12 +43,15 @@ void(* resetFunc) (void) = 0;
 // It is helpful to previously memorize each LEDs configuration,
 // keeping in mind pins representation into shifting byte:
 // (from most significative bit) Q7 Q6 Q5 Q4 Q3 Q2 Q1 Q0 (ex: 11111100 (=252) lights as 0)
-// Binary bytes can be memorized as decimal integers:
-const int c = (int)0b10011100;
-const int e = (int)0b10011110;
-const int f = (int)0b10001110;
-const int g = (int)0b10111110;
-const int a = (int)0b11101110;
+const uint8_t c = 0b10011100;
+const uint8_t e = 0b10011110;
+const uint8_t f = 0b10001110;
+const uint8_t g = 0b10111110;
+const uint8_t a = 0b11101110;
+const uint8_t r = 0b00001010; // 'r' for the board reset announce
+const uint8_t off = 0b00000000;
+// (Binary bytes can be memorized also as decimal integers)
+uint8_t playingNote = off;
 
 void setup() {
   pinMode(13, OUTPUT); // Buzzer
@@ -65,139 +67,166 @@ void setup() {
   pinMode(3, OUTPUT);
   // SH_CP (shift register clock pin): serial data transmission clock pin
   pinMode(2, OUTPUT);
+  // Buzzer and display check
+  /*
+  digitalWrite(3, LOW);
+  shiftOut(4, 2, MSBFIRST, a);
+  digitalWrite(3, HIGH);
+  tone(13, A4);
+  delay(500);
+  noTone(13);
+  */
 }
 
 void loop() {
   // Read current time
   lastTime = millis();
   // Reset board after 2 minutes
-  if (lastTime > 120000) resetFunc();
+  if (lastTime > 120000) {
+    // Display an 'r' for 2s..
+    digitalWrite(3, LOW);
+    shiftOut(4, 2, MSBFIRST, r);
+    digitalWrite(3, HIGH);
+    delay(2000);
+    resetFunc();
+  }
   // Check a button pin status variation only if buzzer's free to play or is already playing the note it is about
   // (Otherwise it would be only a waste of time and energy, since buzzer can only play single notes per time...)
-  if (playingNote == 0 || playingNote == c) {
+  if (playingNote == off || playingNote == c) {
     cReading = digitalRead(12);
+    if (cReading == HIGH) cButtonState = HIGH; // No need to wait debounce lapse to start making noise
+    // (we aren't affecting dangerous actuators pushing these buttons..)
+    // Emit tone and set buzzer as not available for other notes when button's pressed
+    if (cButtonState == HIGH) {
+      // Display note
+      digitalWrite(3, LOW); //ground ST_CP and hold low for as long as you are transmitting
+      shiftOut(4, 2, MSBFIRST, c); // Shift out data mode: Most Significant Bit FIRST
+      // shiftOut() can transmit only 8 bits per step
+      // (since we need not more than a byte to light up 8 LEDs, this time it is not required to call it two times..)
+      // Return the latch pin high to signal chip that it no longer needs to listen for information
+      // This will let 74HC595 to move data from shift to memory register (actually saving it..)
+      digitalWrite(3, HIGH);
+      tone(13, C5);
+      delay(20);
+      noTone(13);
+      playingNote = c;
+    }
     if (cReading != lastCButtonState) lastCDebounceTime = lastTime; // Button pressure, release or debounce!
-    if ((lastTime - lastCDebounceTime) > debounceDelay) { // Button pressure or release!
+    if ((lastTime - lastCDebounceTime) > debounceDelay) { // Button definitely pressed or released!
       if (cReading != cButtonState) cButtonState = cReading;
-      // Emit tone and set buzzer as not available when button's pressed
-      if (cButtonState == HIGH) {
-        tone(13, C3, 10);
-        // Display note
-        digitalWrite(3, LOW); //ground ST_CP and hold low for as long as you are transmitting
-        shiftOut(4, 2, MSBFIRST, c); // Shift out data mode: Most Significant Bit FIRST
-        // shiftOut() can transmit only 8 bits per step
-        // (since we need not more than a byte to light up 8 LEDs, this time it is not required to call it two times..)
-        // Return the latch pin high to signal chip that it no longer needs to listen for information
-        // This will let 74HC595 to move data from shift to memory register (actually saving it..)
-        digitalWrite(3, HIGH);
-        playingNote = c;
-      }
-      // Otherwise, free buzzer..
-      else {
-        noTone(13);
-        // Free display too..
+      // Free buzzer and display when button is released...
+      if (cButtonState == LOW) {
         digitalWrite(3, LOW);
         shiftOut(4, 2, MSBFIRST, 0);
         digitalWrite(3, HIGH);
-        playingNote = 0;
+        playingNote = off;
       }
     }
+    lastCButtonState = cReading;
   }
   // Do the same done with C button to others... 
-  if (playingNote == 0 || playingNote == e) {
+  if (playingNote == off || playingNote == e) {
     eReading = digitalRead(11);
+    if (eReading == HIGH) eButtonState = HIGH;
+    // Emit tone and set buzzer as not available when button's pressed
+    if (eButtonState == HIGH) {
+      digitalWrite(3, LOW);
+      shiftOut(4, 2, MSBFIRST, e);
+      digitalWrite(3, HIGH);
+      tone(13, E5);
+      delay(15);
+      noTone(13);
+      playingNote = e;
+    }
     if (eReading != lastEButtonState) lastEDebounceTime = lastTime; // Button pressure, release or debounce!
     if ((lastTime - lastEDebounceTime) > debounceDelay) { // Button pressure or release!
       if (eReading != eButtonState) eButtonState = eReading;
-      // Emit tone and set buzzer as not available when button's pressed
-      if (eButtonState == HIGH) {
-        tone(13, E3, 10);
-        digitalWrite(3, LOW);
-        shiftOut(4, 2, MSBFIRST, e);
-        digitalWrite(3, HIGH);
-        playingNote = e;
-      }
-      // Otherwise, free buzzer..
-      else {
-        noTone(13);
-        // Free display too..
+      // Free buzzer and display when button is released...
+      if (eButtonState == LOW) {
         digitalWrite(3, LOW);
         shiftOut(4, 2, MSBFIRST, 0);
         digitalWrite(3, HIGH);
-        playingNote = 0;
+        playingNote = off;
       }
     }
+    lastEButtonState = eReading;
   }
-  if (playingNote == 0 || playingNote == f) {
+  if (playingNote == off || playingNote == f) {
     fReading = digitalRead(10);
+    if (fReading == HIGH) fButtonState = HIGH;
+    // Emit tone and set buzzer as not available when button's pressed
+    if (fButtonState == HIGH) {
+      digitalWrite(3, LOW);
+      shiftOut(4, 2, MSBFIRST, f);
+      digitalWrite(3, HIGH);
+      tone(13, F5);
+      delay(10);
+      noTone(13);
+      playingNote = f;
+    }
     if (fReading != lastFButtonState) lastFDebounceTime = lastTime; // Button pressure, release or debounce!
     if ((lastTime - lastFDebounceTime) > debounceDelay) { // Button pressure or release!
       if (fReading != fButtonState) fButtonState = fReading;
-      // Emit tone and set buzzer as not available when button's pressed
-      if (fButtonState == HIGH) {
-        tone(13, F3, 10);
-        digitalWrite(3, LOW);
-        shiftOut(4, 2, MSBFIRST, f);
-        digitalWrite(3, HIGH);
-        playingNote = f;
-      }
-      // Otherwise, free buzzer..
-      else {
-        noTone(13);
-        // Free display too..
+      // Free buzzer and display when button is released...
+      if (fButtonState == LOW) {
         digitalWrite(3, LOW);
         shiftOut(4, 2, MSBFIRST, 0);
         digitalWrite(3, HIGH);
-        playingNote = 0;
+        playingNote = off;
       }
     }
+    lastFButtonState = fReading;
   }
-  if (playingNote == 0 || playingNote == g) {
+  if (playingNote == off || playingNote == g) {
     gReading = digitalRead(9);
+    if (gReading == HIGH) gButtonState = HIGH;
+    // Emit tone and set buzzer as not available when button's pressed
+    if (gButtonState == HIGH) {
+      digitalWrite(3, LOW);
+      shiftOut(4, 2, MSBFIRST, g);
+      digitalWrite(3, HIGH);
+      tone(13, G5);
+      delay(25);
+      noTone(13);
+      playingNote = g;
+    }
     if (gReading != lastGButtonState) lastGDebounceTime = lastTime; // Button pressure, release or debounce!
     if ((lastTime - lastGDebounceTime) > debounceDelay) { // Button pressure or release!
       if (gReading != gButtonState) gButtonState = gReading;
-      // Emit tone and set buzzer as not available when button's pressed
-      if (gButtonState == HIGH) {
-        tone(13, G3, 10);
-        digitalWrite(3, LOW);
-        shiftOut(4, 2, MSBFIRST, g);
-        digitalWrite(3, HIGH);
-        playingNote = g;
-      }
-      // Otherwise, free buzzer..
-      else {
-        noTone(13);
-        // Free display too..
+      // Free buzzer and display when button is released...
+      if (gButtonState == LOW) {
         digitalWrite(3, LOW);
         shiftOut(4, 2, MSBFIRST, 0);
         digitalWrite(3, HIGH);
-        playingNote = 0;
+        playingNote = off;
       }
     }
+    lastGButtonState = gReading;
   }
-  if (playingNote == 0 || playingNote == a) {
+  if (playingNote == off || playingNote == a) {
     aReading = digitalRead(8);
+    if (aReading == HIGH) aButtonState = HIGH;
+    // Emit tone and set buzzer as not available when button's pressed
+    if (aButtonState == HIGH) {
+      digitalWrite(3, LOW);
+      shiftOut(4, 2, MSBFIRST, a);
+      digitalWrite(3, HIGH);
+      tone(13, A5);
+      delay(25);
+      noTone(13);
+      playingNote = a;
+    }
     if (aReading != lastAButtonState) lastADebounceTime = lastTime; // Button pressure, release or debounce!
     if ((lastTime - lastADebounceTime) > debounceDelay) { // Button pressure or release!
       if (aReading != aButtonState) aButtonState = aReading;
-      // Emit tone and set buzzer as not available when button's pressed
-      if (aButtonState == HIGH) {
-        tone(13, A3, 10);
-        digitalWrite(3, LOW);
-        shiftOut(4, 2, MSBFIRST, a);
-        digitalWrite(3, HIGH);
-        playingNote = a;
-      }
-      // Otherwise, free buzzer..
-      else {
-        noTone(13);
-        // Free display too..
+      // Free buzzer and display when button is released...
+      if (aButtonState == LOW) {
         digitalWrite(3, LOW);
         shiftOut(4, 2, MSBFIRST, 0);
         digitalWrite(3, HIGH);
-        playingNote = 0;
+        playingNote = off;
       }
     }
+    lastAButtonState = aReading;
   }
 }

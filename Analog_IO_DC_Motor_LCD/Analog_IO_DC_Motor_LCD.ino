@@ -60,7 +60,8 @@ void setup() {
   pinMode(10, OUTPUT);
   // Driver enabling pin
   pinMode(9, OUTPUT);
-  // LCD display constrast set pin
+  // LCD display constrast set pin (only because I don't have a second potentiometer, which is better. 
+  // Another way to define contrast is by directly plugging lcd to board 5V voltage supply)
   pinMode(6, OUTPUT);
   lcd.begin(16, 2); // 16 columns, 2 rows of char slots
   // (LCD is called 1602 exactly because of columns and rows quantity)
