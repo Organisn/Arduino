@@ -80,15 +80,15 @@
   "project": {
     "files": [
       {
-        "name": "ED.kicad_pro",
+        "name": "ED.kicad_sch",
         "open": false,
         "window": {
           "display": 0,
           "maximized": false,
-          "pos_x": 556,
-          "pos_y": 244,
-          "size_x": 1081,
-          "size_y": 674
+          "pos_x": 636,
+          "pos_y": 101,
+          "size_x": 1280,
+          "size_y": 979
         }
       }
     ]
