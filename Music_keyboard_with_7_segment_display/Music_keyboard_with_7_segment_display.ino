@@ -54,7 +54,7 @@ const uint8_t off = 0b00000000;
 uint8_t playingNote = off;
 
 void setup() {
-  pinMode(13, OUTPUT); // Buzzer
+  pinMode(6, OUTPUT); // Buzzer
   pinMode(12, INPUT); // C button
   pinMode(11, INPUT); // E button
   pinMode(10, INPUT); // F button
@@ -72,9 +72,9 @@ void setup() {
   digitalWrite(3, LOW);
   shiftOut(4, 2, MSBFIRST, a);
   digitalWrite(3, HIGH);
-  tone(13, A4);
+  tone(6, A4); // PWM required!
   delay(500);
-  noTone(13);
+  noTone(6);
   */
 }
 
@@ -106,9 +106,9 @@ void loop() {
       // Return the latch pin high to signal chip that it no longer needs to listen for information
       // This will let 74HC595 to move data from shift to memory register (actually saving it..)
       digitalWrite(3, HIGH);
-      tone(13, C5);
+      tone(6, C5);
       delay(20);
-      noTone(13);
+      noTone(6);
       playingNote = c;
     }
     if (cReading != lastCButtonState) lastCDebounceTime = lastTime; // Button pressure, release or debounce!
@@ -133,9 +133,9 @@ void loop() {
       digitalWrite(3, LOW);
       shiftOut(4, 2, MSBFIRST, e);
       digitalWrite(3, HIGH);
-      tone(13, E5);
+      tone(6, E5);
       delay(15);
-      noTone(13);
+      noTone(6);
       playingNote = e;
     }
     if (eReading != lastEButtonState) lastEDebounceTime = lastTime; // Button pressure, release or debounce!
@@ -159,9 +159,9 @@ void loop() {
       digitalWrite(3, LOW);
       shiftOut(4, 2, MSBFIRST, f);
       digitalWrite(3, HIGH);
-      tone(13, F5);
+      tone(6, F5);
       delay(10);
-      noTone(13);
+      noTone(6);
       playingNote = f;
     }
     if (fReading != lastFButtonState) lastFDebounceTime = lastTime; // Button pressure, release or debounce!
@@ -185,9 +185,9 @@ void loop() {
       digitalWrite(3, LOW);
       shiftOut(4, 2, MSBFIRST, g);
       digitalWrite(3, HIGH);
-      tone(13, G5);
+      tone(6, G5);
       delay(25);
-      noTone(13);
+      noTone(6);
       playingNote = g;
     }
     if (gReading != lastGButtonState) lastGDebounceTime = lastTime; // Button pressure, release or debounce!
@@ -211,9 +211,9 @@ void loop() {
       digitalWrite(3, LOW);
       shiftOut(4, 2, MSBFIRST, a);
       digitalWrite(3, HIGH);
-      tone(13, A5);
+      tone(6, A5);
       delay(25);
-      noTone(13);
+      noTone(6);
       playingNote = a;
     }
     if (aReading != lastAButtonState) lastADebounceTime = lastTime; // Button pressure, release or debounce!
