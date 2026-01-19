@@ -113,7 +113,7 @@ void loop() {
     }
     if (cReading != lastCButtonState) lastCDebounceTime = lastTime; // Button pressure, release or debounce!
     if ((lastTime - lastCDebounceTime) > debounceDelay) { // Button definitely pressed or released!
-      if (cReading != cButtonState) cButtonState = cReading;
+      cButtonState = cReading;
       // Free buzzer and display when button is released...
       if (cButtonState == LOW) {
         digitalWrite(3, LOW);
@@ -140,7 +140,7 @@ void loop() {
     }
     if (eReading != lastEButtonState) lastEDebounceTime = lastTime; // Button pressure, release or debounce!
     if ((lastTime - lastEDebounceTime) > debounceDelay) { // Button pressure or release!
-      if (eReading != eButtonState) eButtonState = eReading;
+      eButtonState = eReading;
       // Free buzzer and display when button is released...
       if (eButtonState == LOW) {
         digitalWrite(3, LOW);
@@ -166,7 +166,7 @@ void loop() {
     }
     if (fReading != lastFButtonState) lastFDebounceTime = lastTime; // Button pressure, release or debounce!
     if ((lastTime - lastFDebounceTime) > debounceDelay) { // Button pressure or release!
-      if (fReading != fButtonState) fButtonState = fReading;
+      fButtonState = fReading;
       // Free buzzer and display when button is released...
       if (fButtonState == LOW) {
         digitalWrite(3, LOW);
@@ -192,7 +192,7 @@ void loop() {
     }
     if (gReading != lastGButtonState) lastGDebounceTime = lastTime; // Button pressure, release or debounce!
     if ((lastTime - lastGDebounceTime) > debounceDelay) { // Button pressure or release!
-      if (gReading != gButtonState) gButtonState = gReading;
+      gButtonState = gReading;
       // Free buzzer and display when button is released...
       if (gButtonState == LOW) {
         digitalWrite(3, LOW);
@@ -218,7 +218,7 @@ void loop() {
     }
     if (aReading != lastAButtonState) lastADebounceTime = lastTime; // Button pressure, release or debounce!
     if ((lastTime - lastADebounceTime) > debounceDelay) { // Button pressure or release!
-      if (aReading != aButtonState) aButtonState = aReading;
+      aButtonState = aReading;
       // Free buzzer and display when button is released...
       if (aButtonState == LOW) {
         digitalWrite(3, LOW);
