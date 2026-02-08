@@ -77,7 +77,7 @@ void loop() {
           case 114:
           case 113:
           case 112:
-            highestPressedKey = CS5;
+            highestPressedKey = D5;
             break;
           case 111: // 16
           case 110:
@@ -95,7 +95,7 @@ void loop() {
           case 98:
           case 97:
           case 96:
-            highestPressedKey = D5;
+            highestPressedKey = DS5;
             break;
           case 95: // 32
           case 94:
@@ -129,7 +129,7 @@ void loop() {
           case 66:
           case 65:
           case 64:
-            highestPressedKey = DS5;
+            highestPressedKey = E5;
             break;
           case 63: // 64
           case 62:
@@ -194,7 +194,7 @@ void loop() {
           case 3:
           case 2:
           case 1:
-            highestPressedKey = E5;
+            highestPressedKey = F5;
             break;
         }
         break;
@@ -202,20 +202,20 @@ void loop() {
         Serial.println("From middle strings: " + String(resistances[1]));
         switch (resistances[1]) {
           case 127:
-            highestPressedKey = F5;
+            highestPressedKey = G5;
             break;
           case 126:
-            highestPressedKey = FS5;
+            highestPressedKey = GS5;
             break;
           case 125:
           case 124:
-            highestPressedKey = G5;
+            highestPressedKey = A5;
             break;
           case 123:
           case 122:
           case 121:
           case 120:
-            highestPressedKey = GS5;
+            highestPressedKey = AS5;
             break;
           case 119:
           case 118:
@@ -225,7 +225,7 @@ void loop() {
           case 114:
           case 113:
           case 112:
-            highestPressedKey = A5;
+            highestPressedKey = C6;
             break;
           case 111:
           case 110:
@@ -243,7 +243,7 @@ void loop() {
           case 98:
           case 97:
           case 96:
-            highestPressedKey = AS5;
+            highestPressedKey = CS6;
             break;
           case 95:
           case 94:
@@ -277,7 +277,7 @@ void loop() {
           case 66:
           case 65:
           case 64:
-            highestPressedKey = B5;
+            highestPressedKey = D6;
             break;
           case 63:
           case 62:
@@ -342,7 +342,7 @@ void loop() {
           case 3:
           case 2:
           case 1:
-            highestPressedKey = C6;
+            highestPressedKey = DS6;
             break;
         }
         break;
@@ -350,20 +350,20 @@ void loop() {
         Serial.println("From higher strings: " + String(resistances[2]));
         switch (resistances[2]) {
           case 127:
-            highestPressedKey = CS6;
+            highestPressedKey = E6;
             break;
           case 126:
-            highestPressedKey = D6;
+            highestPressedKey = F6;
             break;
           case 125:
           case 124:
-            highestPressedKey = DS6;
+            highestPressedKey = FS6;
             break;
           case 123:
           case 122:
           case 121:
           case 120:
-            highestPressedKey = E6;
+            highestPressedKey = G6;
             break;
           case 119:
           case 118:
@@ -373,7 +373,7 @@ void loop() {
           case 114:
           case 113:
           case 112:
-            highestPressedKey = F6;
+            highestPressedKey = A6;
             break;
           case 111:
           case 110:
@@ -391,7 +391,7 @@ void loop() {
           case 98:
           case 97:
           case 96:
-            highestPressedKey = FS6;
+            highestPressedKey = AS6;
             break;
           case 95:
           case 94:
@@ -425,7 +425,7 @@ void loop() {
           case 66:
           case 65:
           case 64:
-            highestPressedKey = G6;
+            highestPressedKey = B6;
             break;
           case 63:
           case 62:
@@ -490,7 +490,7 @@ void loop() {
           case 3:
           case 2:
           case 1:
-            highestPressedKey = GS6;
+            highestPressedKey = C7;
             break;
         }
         break;

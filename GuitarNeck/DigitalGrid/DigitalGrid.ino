@@ -190,45 +190,45 @@ void loop() {
   if (EButtonState == HIGH && eighthButtonState == HIGH)
     highestPressedKey = C5;
   if (AButtonState == HIGH && fifthButtonState == HIGH)
-    highestPressedKey = CS5;
-  if (AButtonState == HIGH && sixthButtonState == HIGH)
     highestPressedKey = D5;
-  if (AButtonState == HIGH && seventhButtonState == HIGH)
+  if (AButtonState == HIGH && sixthButtonState == HIGH)
     highestPressedKey = DS5;
-  if (AButtonState == HIGH && eighthButtonState == HIGH)
+  if (AButtonState == HIGH && seventhButtonState == HIGH)
     highestPressedKey = E5;
-  if (DButtonState == HIGH && fifthButtonState == HIGH)
+  if (AButtonState == HIGH && eighthButtonState == HIGH)
     highestPressedKey = F5;
-  if (DButtonState == HIGH && sixthButtonState == HIGH)
-    highestPressedKey = FS5;
-  if (DButtonState == HIGH && seventhButtonState == HIGH)
+  if (DButtonState == HIGH && fifthButtonState == HIGH)
     highestPressedKey = G5;
-  if (DButtonState == HIGH && eighthButtonState == HIGH)
+  if (DButtonState == HIGH && sixthButtonState == HIGH)
     highestPressedKey = GS5;
-  if (GButtonState == HIGH && fifthButtonState == HIGH)
+  if (DButtonState == HIGH && seventhButtonState == HIGH)
     highestPressedKey = A5;
-  if (GButtonState == HIGH && sixthButtonState == HIGH)
+  if (DButtonState == HIGH && eighthButtonState == HIGH)
     highestPressedKey = AS5;
-  if (GButtonState == HIGH && seventhButtonState == HIGH)
-    highestPressedKey = B5;
-  if (GButtonState == HIGH && eighthButtonState == HIGH)
+  if (GButtonState == HIGH && fifthButtonState == HIGH)
     highestPressedKey = C6;
-  if (BButtonState == HIGH && fifthButtonState == HIGH)
+  if (GButtonState == HIGH && sixthButtonState == HIGH)
     highestPressedKey = CS6;
-  if (BButtonState == HIGH && sixthButtonState == HIGH)
+  if (GButtonState == HIGH && seventhButtonState == HIGH)
     highestPressedKey = D6;
-  if (BButtonState == HIGH && seventhButtonState == HIGH)
+  if (GButtonState == HIGH && eighthButtonState == HIGH)
     highestPressedKey = DS6;
-  if (BButtonState == HIGH && eighthButtonState == HIGH)
+  if (BButtonState == HIGH && fifthButtonState == HIGH)
     highestPressedKey = E6;
-  if (eButtonState == HIGH && fifthButtonState == HIGH)
+  if (BButtonState == HIGH && sixthButtonState == HIGH)
     highestPressedKey = F6;
-  if (eButtonState == HIGH && sixthButtonState == HIGH)
+  if (BButtonState == HIGH && seventhButtonState == HIGH)
     highestPressedKey = FS6;
-  if (eButtonState == HIGH && seventhButtonState == HIGH)
+  if (BButtonState == HIGH && eighthButtonState == HIGH)
     highestPressedKey = G6;
+  if (eButtonState == HIGH && fifthButtonState == HIGH)
+    highestPressedKey = A6;
+  if (eButtonState == HIGH && sixthButtonState == HIGH)
+    highestPressedKey = AS6;
+  if (eButtonState == HIGH && seventhButtonState == HIGH)
+    highestPressedKey = B6;
   if (eButtonState == HIGH && eighthButtonState == HIGH)
-    highestPressedKey = GS6;
+    highestPressedKey = C7;
           
   // Stop sound emission when no key pressed..
   if (EButtonState == LOW &&
