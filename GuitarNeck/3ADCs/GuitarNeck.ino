@@ -20,20 +20,22 @@ void loop() {
   for (byte i = 0; i < 1; i = i + 1) { // !!! i < 3 !!!
     resistances[i] = analogRead(i); // IMPLEMENT BUTTON DEBOUNCE? AND SIGNAL STABILIZATION?
     // Each button is put in series with a single unique resistance
-    // (Since there are 24 frets on this neckboard, resistances go from 0 to 2^6 
+    // and in parallel with all that others sharing its analog pin, 
+    // so that when it's pressed its ADC pin will read a voltage drop
+    // (Since there are 24 frets on this neckboard, resistances go from 1 to 2^7 
     // every two strings: can't use 24 different resistors since the ADC has a
     // only 10 bit resolution. Can't use even just 12 because signal isn't stable enough
     // to always be quantized in the same interval..)
     // Each analog reading will return a different value, which will tell which note to play
     // When multiple frets are pressed only the higher will generate sound
     // (each combo is identified by a unique sum of powers of 2 and the string groups)
-    // (Available note range: A4 (440 hz) - GS6 (1661 hz))
+    // (Available note range: A4 (440 hz) - C7 (2093 hz))
     
     // Since Arduino Uno R3 ADC has a resolution of 10 bits, readings are mapped from 0 to 1023..
     // Following chromatic scale on fretboard, each resistance double the previous one.
     // This will proportionally reflect in digitalization process..
     // EXACTLY?
-    resistances[i] = map(resistances[i], 0, 1023, 0, 127);
+    resistances[i] = map(resistances[i], 0, 1023, 0, 255);
     // Strings are checked from lower to higher (and so their frets..) and 
     // the highest actually pressed key is redefined when higher keys are found pressed...
     switch (i) {
@@ -51,16 +53,20 @@ void loop() {
         */
         switch (resistances[0]) {
           // The lower the key, the lower the resistance, the higher the voltage read...
-          case 127: // 0
+          // MUST UPDATE THIS SWITCH CASE WITH ACTUAL RESISTOR VALUES AND THEIR CORRESPONDING READINGS (AND THEIR COMBOS)!!
+          case 255: // 1
             highestPressedKey = A4;
             break;
-          case 126: // 1
+          case 254: // 2
+          case 253: // 3
+            // When multiple keys are pressed, their resistances are multiplied and divided by their sum...
+            // As said, only the higher note is played..
             highestPressedKey = AS4; // Highest pressed key is updated only if higher keys are actually pressed..
             break;
-          case 125: // 2
-          case 124: // 3
-            // When multiple keys are pressed, their resistances are summed...
-            // As said, only the higher note is played..
+          case 252: // 4
+          case 251: // 5
+          case 250: // 6
+          case 249: // 7
             highestPressedKey = B4;
             break;
           case 123: // 4
