@@ -1,0 +1,6 @@
+**/PCB/**               # Ignore everything into PCB dirs and their subdirs
+!**/PCB/*.kicad_sch     # Include /PCB/ .kicad_sch files
+!**/PCB/*.kicad_pcb     # Include /PCB/ .kicad_pcb files
+!**/PCB/*.kicad_pro     # Include /PCB/ .kicad_pro files
+!**/PCB/*.kicad_prl     # Include /PCB/ .kicad_prl files
+**/PCB/*/               # Ignore all PCB directories subdirs
